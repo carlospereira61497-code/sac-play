@@ -1,43 +1,48 @@
-// Matriz de Inteligência Consolidada (Play Móvel + Mútua + Parceiros + NOC)
-const fluxosOficiais = {
-    "saudacao": () => {
+<script>
+// 1. Matriz de Inteligência Consolidada (Baseada nos seus JSONs)
+const fluxos = {
+    saudacao: () => {
         const hora = new Date().getHours();
-        if (hora < 12) return "Bom dia";
-        if (hora < 18) return "Boa tarde";
-        return "Boa noite";
+        return hora < 12 ? "Bom dia" : hora < 18 ? "Boa tarde" : "Boa noite";
     },
-    "estados": {
-        "INICIO": {
-            msg: `👋✨ {{saudacao}}! Bem-vindo à *Play Móvel*!\n\nPara segurança, informe seu *Número* ou *ID do Circuito* (apenas números):`,
-            proximo: "MENU_PRINCIPAL"
-        },
-        "MENU_PRINCIPAL": {
-            msg: "Como podemos evoluir sua experiência hoje?\n\n1️⃣ Suporte Técnico (Tim/Vivo)\n2️⃣ Mútua Celular\n3️⃣ Financeiro / Faturamento\n4️⃣ Parcerias & MVNO\n5️⃣ Atendimento Humano",
-            opcoes: {
-                "1": "SUPORTE_NOC",
-                "2": "MUTUA",
-                "3": "FINANCEIRO",
-                "4": "PARCEIROS",
-                "5": "HUMANO"
-            }
-        },
-        "RECONHECIMENTO": {
-            msg: "⚠️ *Aviso Importante:*\nNosso time está em treinamento para melhor atendê-lo. O atendimento será retomado às 18h. Agradecemos a compreensão! 💙"
-        }
+    respostas: {
+        "treinamento": "Olá, tudo bem?\n\n⚠️ Nosso atendimento está em *treinamento*. Retornamos às 18h. 💙",
+        "tim": "📡 *NOC:* Consultando Backbone TIM. Verifique se o LED 'Alarm' está aceso.",
+        "vivo": "📡 *NOC:* Acessando gerência VIVO. O problema é falha total ou lentidão?",
+        "parceiro": "✨ *Play Tecnologia:* Você deseja implantar a MVNO para agregar valor ao seu produto?",
+        "default": "👋✨ {{saudacao}}! Bem-vindo à *Play Móvel*! 📱💙\n\nComo posso ajudar?\n1️⃣ Suporte Técnico\n2️⃣ Financeiro\n3️⃣ Parcerias\n4️⃣ Treinamento"
     }
 };
 
-// Lógica de Processamento (O "Cérebro" do Bot)
-function processarResposta(mensagem) {
-    const texto = mensagem.toLowerCase();
+// 2. FUNÇÃO DE ENVIO (O QUE ESTAVA FALTANDO)
+function enviarMensagem() {
+    const input = document.getElementById('chat-input');
+    const container = document.getElementById('chat-messages');
+    const msg = input.value.trim();
     
-    // Se o cliente digitar algo sobre treinamento ou se você ativar o modo pausa
-    if (texto.includes("treinamento")) return fluxosOficiais.estados.RECONHECIMENTO.msg;
+    if (msg !== "") {
+        // Adiciona mensagem do usuário
+        container.innerHTML += `<div class="message user">${msg}</div>`;
+        input.value = '';
 
-    // Respostas Rápidas baseadas nos seus JSONs
-    if (texto.includes("tim")) return "📡 *NOC:* Consultando Backbone TIM. Verifique se o LED 'Alarm' está aceso.";
-    if (texto.includes("vivo")) return "📡 *NOC:* Acessando gerência VIVO. Informe se a falha é em Samambaia ou região.";
-    if (texto.includes("financeiro")) return "💸 *Faturamento:* Para 2ª via de boletos, digite seu CPF/CNPJ.";
-    
-    return fluxosOficiais.estados.MENU_PRINCIPAL.msg.replace("{{saudacao}}", fluxosOficiais.saudacao());
+        // Resposta do Bot com os fluxos oficiais
+        setTimeout(() => {
+            let resposta = fluxos.respostas.default.replace("{{saudacao}}", fluxos.saudacao());
+            const termo = msg.toLowerCase();
+
+            if (termo.includes("treinamento")) resposta = fluxos.respostas.treinamento;
+            else if (termo.includes("tim")) resposta = fluxos.respostas.tim;
+            else if (termo.includes("vivo")) resposta = fluxos.respostas.vivo;
+            else if (termo.includes("parceiro")) resposta = fluxos.respostas.parceiro;
+
+            container.innerHTML += `<div class="message bot">${resposta}</div>`;
+            container.scrollTop = container.scrollHeight;
+        }, 600);
+    }
 }
+
+// 3. Habilitar Tecla Enter
+document.getElementById('chat-input').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') enviarMensagem();
+});
+</script>
