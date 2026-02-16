@@ -1,140 +1,92 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Play Móvel Chat</title>
-
-<style>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #0f172a;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-.chat-container {
-    width: 400px;
-    height: 600px;
-    background: #1e293b;
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-#chat-messages {
-    flex: 1;
-    padding: 15px;
-    overflow-y: auto;
-    color: white;
-}
-
-.message {
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 8px;
-    max-width: 80%;
-}
-
-.user {
-    background: #2563eb;
-    align-self: flex-end;
-}
-
-.bot {
-    background: #334155;
-}
-
-.input-area {
-    display: flex;
-    border-top: 1px solid #334155;
-}
-
-input {
-    flex: 1;
-    padding: 10px;
-    border: none;
-    outline: none;
-    background: #0f172a;
-    color: white;
-}
-
-button {
-    padding: 10px 15px;
-    background: #2563eb;
-    border: none;
-    color: white;
-    cursor: pointer;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAC Play - Oficial</title>
+    <style>
+        /* CSS - O Visual Dark Mode da Play */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #000; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; color: white; }
+        #chat-container { width: 100%; max-width: 500px; height: 90vh; background: #121212; display: flex; flex-direction: column; border-radius: 15px; overflow: hidden; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        #header { background: #1a1a1a; padding: 20px; text-align: center; border-bottom: 2px solid #d10061; }
+        #header h2 { margin: 0; color: #d10061; font-size: 1.2rem; }
+        #chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background-image: linear-gradient(to bottom, #121212, #0a0a0a); }
+        .message { max-width: 85%; padding: 12px 16px; border-radius: 15px; font-size: 0.95rem; line-height: 1.4; }
+        .bot { background: #222; align-self: flex-start; border-bottom-left-radius: 2px; border: 1px solid #333; }
+        .user { background: #d10061; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        #input-area { padding: 20px; background: #1a1a1a; display: flex; gap: 10px; border-top: 1px solid #333; }
+        input { flex: 1; background: #2a2a2a; border: none; padding: 12px; border-radius: 8px; color: white; outline: none; }
+        button { background: #d10061; border: none; padding: 10px 20px; border-radius: 8px; color: white; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        button:hover { background: #ff0077; }
+    </style>
 </head>
-
 <body>
 
-<div class="chat-container">
-    <div id="chat-messages"></div>
-    <div class="input-area">
-        <input type="text" placeholder="Digite sua mensagem...">
-        <button>Enviar</button>
+<div id="chat-container">
+    <div id="header">
+        <h2>SAC PLAY 📱💙</h2>
+    </div>
+    
+    <div id="chat-messages">
+        <div class="message bot">Olá! Sou o assistente virtual da Play. Como posso ajudar a sua operação hoje?</div>
+    </div>
+
+    <div id="input-area">
+        <input type="text" id="chat-input" placeholder="Digite sua mensagem..." autocomplete="off">
+        <button id="send-btn">Enviar</button>
     </div>
 </div>
 
 <script>
-const fluxosOficiais = {
-    saudacao: () => {
-        const hora = new Date().getHours();
-        if (hora < 12) return "Bom dia";
-        if (hora < 18) return "Boa tarde";
-        return "Boa noite";
-    },
-    respostas: {
-        treinamento: "⚠️ Atendimento em treinamento. Retornamos às 18h.",
-        tim: "📡 NOC: Consultando Backbone TIM.",
-        vivo: "📡 NOC: Acessando gerência VIVO.",
-        financeiro: "💸 Faturamento: Informe CPF/CNPJ.",
-        default: "👋 {{saudacao}}! Bem-vindo à Play Móvel.\n\n1️⃣ Suporte\n2️⃣ Financeiro\n3️⃣ Parcerias\n4️⃣ Treinamento"
-    }
-};
+    // JAVASCRIPT - A Inteligência dos teus JSONs
+    const fluxos = {
+        saudacao: () => {
+            const hora = new Date().getHours();
+            return hora < 12 ? "Bom dia" : hora < 18 ? "Boa tarde" : "Boa noite";
+        },
+        respostas: {
+            "treinamento": "Olá, tudo bem?\n\n⚠️ Nosso atendimento está em *treinamento*. Retornamos normalmente às 18h. 💙",
+            "tim": "📡 *NOC:* Consultando Backbone TIM. Verifique se o LED 'Alarm' está aceso.",
+            "vivo": "📡 *NOC:* Acessando gerência VIVO. O problema é falha total ou lentidão?",
+            "parceiro": "✨ *Play Tecnologia:* Deseja implantar a MVNO para agregar valor ao seu produto?",
+            "default": "👋✨ {{saudacao}}! Bem-vindo à *Play Móvel*! 📱💙\n\nComo posso ajudar?\n1️⃣ Suporte Técnico\n2️⃣ Financeiro\n3️⃣ Parcerias\n4️⃣ Treinamento"
+        }
+    };
 
-function processarResposta(mensagem) {
-    const texto = mensagem.toLowerCase();
-    if (texto.includes("treinamento")) return fluxosOficiais.respostas.treinamento;
-    if (texto.includes("tim")) return fluxosOficiais.respostas.tim;
-    if (texto.includes("vivo")) return fluxosOficiais.respostas.vivo;
-    if (texto.includes("financeiro")) return fluxosOficiais.respostas.financeiro;
-    return fluxosOficiais.respostas.default.replace("{{saudacao}}", fluxosOficiais.saudacao());
-}
-
-function enviarMensagem() {
-    const input = document.querySelector('input');
     const container = document.getElementById('chat-messages');
-    const msg = input.value.trim();
-    if (!msg) return;
+    const input = document.getElementById('chat-input');
+    const btn = document.getElementById('send-btn');
 
-    container.innerHTML += `<div class="message user">${msg}</div>`;
-    input.value = '';
-
-    setTimeout(() => {
-        const resposta = processarResposta(msg);
-        container.innerHTML += `<div class="message bot">${resposta}</div>`;
+    function adicionarMensagem(texto, tipo) {
+        const div = document.createElement('div');
+        div.className = `message ${tipo}`;
+        div.innerText = texto;
+        container.appendChild(div);
         container.scrollTop = container.scrollHeight;
-    }, 500);
-}
+    }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const input = document.querySelector('input');
-    const btn = document.querySelector('button');
+    function responder() {
+        const msg = input.value.trim();
+        if (msg === "") return;
 
-    input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') enviarMensagem();
-    });
+        adicionarMensagem(msg, 'user');
+        input.value = '';
 
-    btn.onclick = enviarMensagem;
-});
+        setTimeout(() => {
+            const termo = msg.toLowerCase();
+            let resposta = fluxos.respostas.default.replace("{{saudacao}}", fluxos.saudacao());
+
+            if (termo.includes("treinamento")) resposta = fluxos.respostas.treinamento;
+            else if (termo.includes("tim")) resposta = fluxos.respostas.tim;
+            else if (termo.includes("vivo")) resposta = fluxos.respostas.vivo;
+            else if (termo.includes("parceiro")) resposta = fluxos.respostas.parceiro;
+
+            adicionarMensagem(resposta, 'bot');
+        }, 600);
+    }
+
+    btn.onclick = responder;
+    input.onkeypress = (e) => { if (e.key === 'Enter') responder(); };
 </script>
 
 </body>
