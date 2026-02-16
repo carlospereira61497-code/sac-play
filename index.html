@@ -3,116 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAC Play - Acesso Restrito</title>
+    <title>Portal Play - NOC Central</title>
     <style>
-        /* Variáveis de Cores NOC */
-        :root { --rosa-play: #d10061; --fundo-dark: #000000; --card-dark: #121212; --texto: #ffffff; }
+        :root { --rosa-play: #d10061; --fundo: #000; --card: #121212; --input: #2a2a2a; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--fundo); margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; color: #fff; overflow: hidden; }
+        
+        /* CONTAINER PRINCIPAL */
+        #main-wrapper { width: 100%; max-width: 450px; height: 90vh; display: flex; flex-direction: column; }
 
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--fundo-dark); margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; color: var(--texto); overflow: hidden; }
-        
         /* TELA DE LOGIN */
-        #login-screen { width: 100%; max-width: 380px; padding: 40px; background: var(--card-dark); border-radius: 15px; border: 1px solid #333; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.8); }
-        .logo-login { color: var(--rosa-play); font-size: 2.2rem; font-weight: bold; margin-bottom: 10px; }
-        .login-input { width: 100%; background: #222; border: 1px solid #444; padding: 12px; margin: 10px 0; border-radius: 8px; color: white; box-sizing: border-box; outline: none; transition: 0.3s; }
-        .login-input:focus { border-color: var(--rosa-play); }
-        .btn-acessar { width: 100%; background: var(--rosa-play); border: none; padding: 14px; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; margin-top: 15px; transition: 0.3s; }
-        .btn-acessar:hover { background: #ff0077; transform: scale(1.02); }
-        
-        /* INTERFACE DO CHAT (Inicia Escondida) */
-        #chat-interface { display: none; width: 100%; max-width: 500px; height: 95vh; background: var(--card-dark); flex-direction: column; border-radius: 15px; border: 1px solid #333; position: relative; }
-        #chat-header { background: #1a1a1a; padding: 15px; text-align: center; border-bottom: 2px solid var(--rosa-play); font-weight: bold; color: var(--rosa-play); }
-        #chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #0a0a0a; }
-        .message { padding: 12px 16px; border-radius: 15px; max-width: 85%; font-size: 0.95rem; line-height: 1.4; }
+        #login-box { background: var(--card); padding: 40px; border-radius: 20px; border: 1px solid #333; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .logo { color: var(--rosa-play); font-size: 2.5rem; font-weight: bold; margin-bottom: 5px; }
+        .subtitle { color: #888; margin-bottom: 30px; font-size: 0.9rem; }
+        .field { width: 100%; background: var(--input); border: 1px solid #444; padding: 15px; margin: 10px 0; border-radius: 10px; color: #fff; box-sizing: border-box; outline: none; }
+        .field:focus { border-color: var(--rosa-play); }
+        .btn-login { width: 100%; background: var(--rosa-play); border: none; padding: 15px; border-radius: 10px; color: #fff; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn-login:hover { background: #ff0077; transform: translateY(-2px); }
+
+        /* INTERFACE DO CHAT (Inicia Oculta) */
+        #chat-app { display: none; background: var(--card); height: 100%; flex-direction: column; border-radius: 20px; border: 1px solid #333; overflow: hidden; }
+        #chat-header { background: #1a1a1a; padding: 20px; border-bottom: 2px solid var(--rosa-play); display: flex; align-items: center; gap: 10px; }
+        #chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .msg { padding: 12px 18px; border-radius: 15px; font-size: 0.95rem; line-height: 1.5; max-width: 85%; }
         .bot { background: #222; align-self: flex-start; border-bottom-left-radius: 2px; }
         .user { background: var(--rosa-play); align-self: flex-end; border-bottom-right-radius: 2px; }
-        .input-area { padding: 15px; display: flex; gap: 10px; border-top: 1px solid #333; background: #1a1a1a; }
-        .chat-input { flex: 1; background: #2a2a2a; border: none; padding: 12px; border-radius: 8px; color: white; outline: none; }
+        .chat-input-area { padding: 20px; background: #1a1a1a; display: flex; gap: 10px; }
+        .chat-field { flex: 1; background: var(--input); border: none; padding: 12px; border-radius: 8px; color: #fff; outline: none; }
     </style>
 </head>
 <body>
 
-    <div id="login-screen">
-        <div class="logo-login">PLAY 📱💙</div>
-        <p style="font-size: 0.9rem; color: #888;">Coordenadoria de NOC & Parceiros</p>
-        <input type="text" id="user" class="login-input" placeholder="Usuário">
-        <input type="password" id="pass" class="login-input" placeholder="Senha">
-        <button class="btn-acessar" onclick="fazerLogin()">ENTRAR NO SISTEMA</button>
-        <p id="error-msg" style="color: #ff4444; font-size: 13px; display: none; margin-top: 10px;">❌ Credenciais inválidas.</p>
-    </div>
+    <div id="main-wrapper">
+        <div id="login-box">
+            <div class="logo">PLAY 📱</div>
+            <div class="subtitle">Coordenação Network Operations Center</div>
+            <input type="text" id="user" class="field" placeholder="Usuário">
+            <input type="password" id="pass" class="field" placeholder="Senha">
+            <button class="btn-login" onclick="executarLogin()">ACESSAR BACKOFFICE</button>
+            <p id="erro" style="color: #ff4444; font-size: 0.8rem; display: none; margin-top: 15px;">Acesso negado. Verifique as credenciais.</p>
+        </div>
 
-    <div id="chat-interface">
-        <div id="chat-header">SAC PLAY - ATENDIMENTO ESPECIALIZADO</div>
-        <div id="chat-messages"></div>
-        <div class="input-area">
-            <input type="text" id="chat-input" class="chat-input" placeholder="Descreva o incidente...">
-            <button onclick="enviarMensagem()" style="background:var(--rosa-play); border:none; color:white; padding:10px 15px; border-radius:8px; cursor:pointer; font-weight:bold;">Enviar</button>
+        <div id="chat-app">
+            <div id="chat-header">
+                <div style="width: 10px; height: 10px; background: #00ff00; border-radius: 50%;"></div>
+                <strong>SAC PLAY - MONITORAMENTO</strong>
+            </div>
+            <div id="chat-messages"></div>
+            <div class="chat-input-area">
+                <input type="text" id="chat-input" class="chat-field" placeholder="Digite o comando ou falha...">
+                <button onclick="enviar()" style="background:var(--rosa-play); border:none; color:#fff; padding:10px 15px; border-radius:8px; cursor:pointer;">➤</button>
+            </div>
         </div>
     </div>
 
 <script>
-    // Configurações de Acesso (Pode alterar aqui)
-    const ACESSO = { user: "admin", pass: "play123" };
+    // Configurações de Acesso
+    const CREDENCIAIS = { usuario: "admin", senha: "123" };
 
-    function fazerLogin() {
+    function executarLogin() {
         const u = document.getElementById('user').value;
         const p = document.getElementById('pass').value;
 
-        if (u === ACESSO.user && p === ACESSO.pass) {
-            document.getElementById('login-screen').style.display = 'none';
-            const chat = document.getElementById('chat-interface');
-            chat.style.display = 'flex';
+        if (u === CREDENCIAIS.usuario && p === CREDENCIAIS.senha) {
+            document.getElementById('login-box').style.display = 'none';
+            document.getElementById('chat-app').style.display = 'flex';
             
-            // Saudação inicial baseada no horário (Fluxo Play Móvel)
+            // Saudação Dinâmica (Play Móvel)
             const hora = new Date().getHours();
             const saudacao = hora < 12 ? "Bom dia" : hora < 18 ? "Boa tarde" : "Boa noite";
             
-            adicionarBolha(`${saudacao} 👋✨ Bem-vindo à *Play Móvel*! 📱💙\n\nSou seu assistente de triagem. Como posso ajudar o NOC hoje?`, "bot");
+            postarMsg(`${saudacao} 👋✨ Bem-vindo ao NOC! Sistema de inteligência ativado. Como posso ajudar na operação hoje?`, "bot");
         } else {
-            document.getElementById('error-msg').style.display = 'block';
+            document.getElementById('erro').style.display = 'block';
         }
     }
 
-    function adicionarBolha(texto, tipo) {
+    function postarMsg(texto, tipo) {
         const container = document.getElementById('chat-messages');
-        const div = document.createElement('div');
-        div.className = `message ${tipo}`;
-        div.innerText = texto;
-        container.appendChild(div);
+        const htmlMsg = `<div class="msg ${tipo}">${texto}</div>`;
+        container.innerHTML += htmlMsg;
         container.scrollTop = container.scrollHeight;
     }
 
-    function enviarMensagem() {
-        const input = document.getElementById('chat-input');
-        const msg = input.value.trim();
+    function enviar() {
+        const campo = document.getElementById('chat-input');
+        const msg = campo.value.trim();
         if(!msg) return;
 
-        adicionarBolha(msg, 'user');
-        input.value = '';
+        postarMsg(msg, 'user');
+        campo.value = '';
 
-        // Respostas baseadas nos seus fluxos oficiais
+        // Lógica baseada nos arquivos JSON (Mútua, Play Móvel, Parceiros)
         setTimeout(() => {
-            let resp = "Entendido. Um especialista do NOC foi notificado.";
             const t = msg.toLowerCase();
+            let r = "Recebido. Encaminhando para análise do Coordenador.";
 
             if(t.includes("treinamento")) {
-                resp = "Olá! ⚠️ No momento, nosso atendimento está em *treinamento* para evolução do time. Retornamos às 18h. 💙";
+                r = "Olá, tudo bem?\n\n⚠️ Nosso atendimento está em *treinamento*. Retornamos às 18h. 💙";
             } else if(t.includes("tim")) {
-                resp = "📡 *Triagem TIM:* Consultando alarmes no Backbone. Informe o ID do circuito para verificação de sinal.";
+                r = "📡 *BACKBONE TIM:* Iniciando teste de latência e verificação de enlace.";
             } else if(t.includes("vivo")) {
-                resp = "📡 *Triagem VIVO:* Acessando gerência. É uma falha total ou degradação de pacote?";
+                r = "📡 *BACKBONE VIVO:* Consultando gerência de alarmes da região.";
             } else if(t.includes("parceiro")) {
-                resp = "✨ *Play Tecnologia:* Você deseja implantar a MVNO para agregar valor ao seu produto? 🤔";
+                r = "✨ *PLAY TECNOLOGIA:* Você deseja implantar a MVNO para agregar valor ao seu produto? 🤔";
             }
 
-            adicionarBolha(resp, "bot");
-        }, 700);
+            postarMsg(r, "bot");
+        }, 800);
     }
 
-    // Atalho tecla Enter
+    // Tecla Enter para facilitar no PC
     document.addEventListener('keypress', (e) => {
         if(e.key === 'Enter') {
-            if(document.getElementById('login-screen').style.display !== 'none') fazerLogin();
-            else enviarMensagem();
+            if(document.getElementById('login-box').style.display !== 'none') executarLogin();
+            else enviar();
         }
     });
 </script>
