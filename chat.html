@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Configurações Bot | Play</title>
+    <style>
+        .modal { transition: opacity 0.25s ease; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body class="bg-[#0a0a0a] h-screen flex flex-col font-sans text-white">
+
+    <header class="bg-[#121212] border-b border-white/5 p-4 flex justify-between items-center shadow-lg">
+        <div class="flex items-center gap-3">
+            <div class="bg-[#ff0066] p-2 rounded-lg"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg></div>
+            <span class="font-bold tracking-tighter text-xl uppercase">Play <span class="text-[#ff0066]">NOC</span></span>
+        </div>
+        
+        <button id="open-config" class="p-2 hover:bg-white/10 rounded-full transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+        </button>
+    </header>
+
+    <main class="flex-1 flex flex-col bg-[#0a0a0a] overflow-hidden">
+        <div id="chat-container" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
+        <div class="p-4 bg-[#121212] border-t border-white/5">
+            <form id="chat-form" class="max-w-4xl mx-auto flex gap-4">
+                <input id="chat-input" type="text" class="flex-1 bg-[#1a1a1a] border-none rounded-xl px-5 py-4 text-sm text-white focus:ring-1 focus:ring-[#ff0066] outline-none" placeholder="Digite sua mensagem...">
+                <button class="bg-[#ff0066] px-8 py-4 rounded-xl font-bold uppercase text-xs">Enviar</button>
+            </form>
+        </div>
+    </main>
+
+    <div id="config-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
+        <div class="bg-[#121212] w-full max-w-lg rounded-3xl p-8 border border-white/10 shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold">Configuração do Bot NOC</h2>
+                <button id="close-config" class="text-slate-500 hover:text-white font-bold">X</button>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="text-[10px] uppercase text-slate-500 font-bold tracking-widest">Pergunta 1: ID Circuito</label>
+                    <input id="conf-p1" type="text" class="w-full bg-[#1a1a1a] border border-white/5 rounded-xl p-3 mt-1 text-sm outline-none focus:border-[#ff0066]">
+                </div>
+                <div>
+                    <label class="text-[10px] uppercase text-slate-500 font-bold tracking-widest">Pergunta 2: Operadora</label>
+                    <input id="conf-p2" type="text" class="w-full bg-[#1a1a1a] border border-white/5 rounded-xl p-3 mt-1 text-sm outline-none focus:border-[#ff0066]">
+                </div>
+                <div>
+                    <label class="text-[10px] uppercase text-slate-500 font-bold tracking-widest">Token Telegram (Opcional)</label>
+                    <input id="conf-token" type="password" placeholder="Seu Token do Bot" class="w-full bg-[#1a1a1a] border border-white/5 rounded-xl p-3 mt-1 text-sm outline-none focus:border-[#ff0066]">
+                </div>
+                <button id="save-config" class="w-full bg-[#ff0066] py-4 rounded-xl font-black uppercase tracking-widest mt-4">Salvar Alterações</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados padrão (Default)
+        let config = JSON.parse(localStorage.getItem('playConfig')) || {
+            p1: "Qual o ID do circuito ou designação?",
+            p2: "Qual a operadora afetada? (Tim ou Vivo)",
+            token: ""
+        };
+
+        // Elementos
+        const modal = document.getElementById('config-modal');
+        const openBtn = document.getElementById('open-config');
+        const closeBtn = document.getElementById('close-config');
+        const saveBtn = document.getElementById('save-config');
+        const chatForm = document.getElementById('chat-form');
+        const chatInput = document.getElementById('chat-input');
+        const chatContainer = document.getElementById('chat-container');
+
+        // Abrir/Fechar Modal
+        openBtn.onclick = () => {
+            document.getElementById('conf-p1').value = config.p1;
+            document.getElementById('conf-p2').value = config.p2;
+            document.getElementById('conf-token').value = config.token;
+            modal.classList.remove('hidden');
+        };
+        closeBtn.onclick = () => modal.classList.add('hidden');
+
+        // Salvar Configurações
+        saveBtn.onclick = () => {
+            config.p1 = document.getElementById('conf-p1').value;
+            config.p2 = document.getElementById('conf-p2').value;
+            config.token = document.getElementById('conf-token').value;
+            localStorage.setItem('playConfig', JSON.stringify(config));
+            modal.classList.add('hidden');
+            alert("Configurações atualizadas!");
+            location.reload(); // Reinicia para aplicar
+        };
+
+        // Lógica do Chat com as perguntas configuradas
+        let etapa = 0;
+        
+        function addMessage(text, type) {
+            const wrapper = document.createElement('div');
+            wrapper.className = type === 'user' ? "flex flex-col items-end ml-auto" : "flex flex-col items-start";
+            wrapper.innerHTML = `<div class="${type === 'user' ? 'bg-[#262626]' : 'bg-[#1a1a1a]'} p-4 rounded-2xl max-w-xs text-sm border border-white/5 mb-4">${text}</div>`;
+            chatContainer.appendChild(wrapper);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // Mensagem inicial
+        addMessage(config.p1, 'bot');
+
+        chatForm.onsubmit = (e) => {
+            e.preventDefault();
+            const msg = chatInput.value.trim();
+            if(!msg) return;
+            
+            addMessage(msg, 'user');
+            chatInput.value = "";
+
+            setTimeout(() => {
+                if(etapa === 0) {
+                    addMessage(config.p2, 'bot');
+                    etapa = 1;
+                } else if(etapa === 1) {
+                    addMessage("Entendido. Registrando sua solicitação no NOC Play...", 'bot');
+                    etapa = 2;
+                }
+            }, 800);
+        };
+    </script>
+</body>
+</html>
