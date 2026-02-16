@@ -3,122 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Play - NOC Central</title>
+    <title>Dashboard Play - NOC Central</title>
     <style>
         :root { --rosa-play: #d10061; --fundo: #000; --card: #121212; --input: #2a2a2a; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--fundo); margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; color: #fff; overflow: hidden; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--fundo); margin: 0; color: #fff; overflow: hidden; }
         
-        /* CONTAINER PRINCIPAL */
-        #main-wrapper { width: 100%; max-width: 450px; height: 90vh; display: flex; flex-direction: column; }
-
         /* TELA DE LOGIN */
-        #login-box { background: var(--card); padding: 40px; border-radius: 20px; border: 1px solid #333; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .logo { color: var(--rosa-play); font-size: 2.5rem; font-weight: bold; margin-bottom: 5px; }
-        .subtitle { color: #888; margin-bottom: 30px; font-size: 0.9rem; }
-        .field { width: 100%; background: var(--input); border: 1px solid #444; padding: 15px; margin: 10px 0; border-radius: 10px; color: #fff; box-sizing: border-box; outline: none; }
-        .field:focus { border-color: var(--rosa-play); }
-        .btn-login { width: 100%; background: var(--rosa-play); border: none; padding: 15px; border-radius: 10px; color: #fff; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
-        .btn-login:hover { background: #ff0077; transform: translateY(-2px); }
+        #login-box { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .login-card { background: var(--card); padding: 40px; border-radius: 20px; border: 1px solid #333; text-align: center; width: 350px; }
+        .field { width: 100%; background: var(--input); border: 1px solid #444; padding: 15px; margin: 10px 0; border-radius: 10px; color: #fff; box-sizing: border-box; }
+        .btn-login { width: 100%; background: var(--rosa-play); border: none; padding: 15px; border-radius: 10px; color: #fff; font-weight: bold; cursor: pointer; }
 
-        /* INTERFACE DO CHAT (Inicia Oculta) */
-        #chat-app { display: none; background: var(--card); height: 100%; flex-direction: column; border-radius: 20px; border: 1px solid #333; overflow: hidden; }
-        #chat-header { background: #1a1a1a; padding: 20px; border-bottom: 2px solid var(--rosa-play); display: flex; align-items: center; gap: 10px; }
-        #chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
-        .msg { padding: 12px 18px; border-radius: 15px; font-size: 0.95rem; line-height: 1.5; max-width: 85%; }
-        .bot { background: #222; align-self: flex-start; border-bottom-left-radius: 2px; }
-        .user { background: var(--rosa-play); align-self: flex-end; border-bottom-right-radius: 2px; }
-        .chat-input-area { padding: 20px; background: #1a1a1a; display: flex; gap: 10px; }
-        .chat-field { flex: 1; background: var(--input); border: none; padding: 12px; border-radius: 8px; color: #fff; outline: none; }
+        /* PAINEL PRINCIPAL (Abas) */
+        #dashboard { display: none; height: 100vh; flex-direction: column; }
+        .nav-tabs { display: flex; background: #1a1a1a; border-bottom: 2px solid var(--rosa-play); }
+        .tab-link { padding: 15px 25px; cursor: pointer; border: none; background: none; color: #888; font-weight: bold; transition: 0.3s; }
+        .tab-link.active { color: var(--rosa-play); background: #222; }
+
+        .tab-content { flex: 1; display: none; padding: 20px; overflow-y: auto; }
+        .tab-content.active { display: block; }
+
+        /* INTERFACE DE CHAT */
+        #chat-messages { height: 70vh; display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; overflow-y: auto; }
+        .msg { padding: 12px; border-radius: 10px; max-width: 80%; }
+        .bot { background: #222; align-self: flex-start; }
+        .user { background: var(--rosa-play); align-self: flex-end; }
+        .input-area { display: flex; gap: 10px; }
+
+        /* STATUS DE REDE */
+        .status-card { background: #1a1a1a; padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 5px solid #00ff00; }
     </style>
 </head>
 <body>
 
-    <div id="main-wrapper">
-        <div id="login-box">
-            <div class="logo">PLAY 📱</div>
-            <div class="subtitle">Coordenação Network Operations Center</div>
+    <div id="login-box">
+        <div class="login-card">
+            <h2 style="color:var(--rosa-play)">PLAY 📱</h2>
             <input type="text" id="user" class="field" placeholder="Usuário">
             <input type="password" id="pass" class="field" placeholder="Senha">
-            <button class="btn-login" onclick="executarLogin()">ACESSAR BACKOFFICE</button>
-            <p id="erro" style="color: #ff4444; font-size: 0.8rem; display: none; margin-top: 15px;">Acesso negado. Verifique as credenciais.</p>
+            <button class="btn-login" onclick="login()">ENTRAR</button>
+        </div>
+    </div>
+
+    <div id="dashboard">
+        <div class="nav-tabs">
+            <button class="tab-link active" onclick="openTab(event, 'tab-chat')">💬 Chat</button>
+            <button class="tab-link" onclick="openTab(event, 'tab-noc')">📡 Status Rede</button>
+            <button class="tab-link" onclick="openTab(event, 'tab-treino')">🎓 Treinamento</button>
         </div>
 
-        <div id="chat-app">
-            <div id="chat-header">
-                <div style="width: 10px; height: 10px; background: #00ff00; border-radius: 50%;"></div>
-                <strong>SAC PLAY - MONITORAMENTO</strong>
-            </div>
+        <div id="tab-chat" class="tab-content active">
             <div id="chat-messages"></div>
-            <div class="chat-input-area">
-                <input type="text" id="chat-input" class="chat-field" placeholder="Digite o comando ou falha...">
-                <button onclick="enviar()" style="background:var(--rosa-play); border:none; color:#fff; padding:10px 15px; border-radius:8px; cursor:pointer;">➤</button>
+            <div class="input-area">
+                <input type="text" id="chat-input" class="field" placeholder="Digite...">
+                <button onclick="enviar()" class="btn-login" style="width:100px">Enviar</button>
             </div>
+        </div>
+
+        <div id="tab-noc" class="tab-content">
+            <h3>Monitoramento em Tempo Real</h3>
+            <div class="status-card">Backbone TIM: <strong>ONLINE</strong> (Latência 12ms)</div>
+            <div class="status-card">Backbone VIVO: <strong>ONLINE</strong> (Latência 15ms)</div>
+            <div class="status-card" style="border-left-color: orange;">Enlace Samambaia: <strong>INSTÁVEL</strong></div>
+        </div>
+
+        <div id="tab-treino" class="tab-content">
+            <h3>Gestão de Equipa</h3>
+            <p>Ativar modo treinamento pausará o bot e exibirá a mensagem oficial do Reconhecimento.</p>
+            <button class="btn-login" onclick="ativarTreino()">ATIVAR MODO TREINAMENTO</button>
         </div>
     </div>
 
 <script>
-    // Configurações de Acesso
-    const CREDENCIAIS = { usuario: "admin", senha: "123" };
-
-    function executarLogin() {
-        const u = document.getElementById('user').value;
-        const p = document.getElementById('pass').value;
-
-        if (u === CREDENCIAIS.usuario && p === CREDENCIAIS.senha) {
+    function login() {
+        if(document.getElementById('user').value === "admin" && document.getElementById('pass').value === "123") {
             document.getElementById('login-box').style.display = 'none';
-            document.getElementById('chat-app').style.display = 'flex';
-            
-            // Saudação Dinâmica (Play Móvel)
-            const hora = new Date().getHours();
-            const saudacao = hora < 12 ? "Bom dia" : hora < 18 ? "Boa tarde" : "Boa noite";
-            
-            postarMsg(`${saudacao} 👋✨ Bem-vindo ao NOC! Sistema de inteligência ativado. Como posso ajudar na operação hoje?`, "bot");
-        } else {
-            document.getElementById('erro').style.display = 'block';
+            document.getElementById('dashboard').style.display = 'flex';
         }
     }
 
-    function postarMsg(texto, tipo) {
-        const container = document.getElementById('chat-messages');
-        const htmlMsg = `<div class="msg ${tipo}">${texto}</div>`;
-        container.innerHTML += htmlMsg;
-        container.scrollTop = container.scrollHeight;
+    function openTab(evt, tabName) {
+        let contents = document.getElementsByClassName("tab-content");
+        for (let i = 0; i < contents.length; i++) contents[i].style.display = "none";
+        let links = document.getElementsByClassName("tab-link");
+        for (let i = 0; i < links.length; i++) links[i].className = links[i].className.replace(" active", "");
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
     }
 
     function enviar() {
-        const campo = document.getElementById('chat-input');
-        const msg = campo.value.trim();
-        if(!msg) return;
+        const input = document.getElementById('chat-input');
+        const container = document.getElementById('chat-messages');
+        if(!input.value) return;
+        
+        container.innerHTML += `<div class="msg user">${input.value}</div>`;
+        const termo = input.value.toLowerCase();
+        input.value = '';
 
-        postarMsg(msg, 'user');
-        campo.value = '';
-
-        // Lógica baseada nos arquivos JSON (Mútua, Play Móvel, Parceiros)
         setTimeout(() => {
-            const t = msg.toLowerCase();
-            let r = "Recebido. Encaminhando para análise do Coordenador.";
-
-            if(t.includes("treinamento")) {
-                r = "Olá, tudo bem?\n\n⚠️ Nosso atendimento está em *treinamento*. Retornamos às 18h. 💙";
-            } else if(t.includes("tim")) {
-                r = "📡 *BACKBONE TIM:* Iniciando teste de latência e verificação de enlace.";
-            } else if(t.includes("vivo")) {
-                r = "📡 *BACKBONE VIVO:* Consultando gerência de alarmes da região.";
-            } else if(t.includes("parceiro")) {
-                r = "✨ *PLAY TECNOLOGIA:* Você deseja implantar a MVNO para agregar valor ao seu produto? 🤔";
-            }
-
-            postarMsg(r, "bot");
-        }, 800);
+            let resp = "Analisando dados...";
+            if(termo.includes("tim")) resp = "📡 NOC: Verificando alarmes TIM.";
+            container.innerHTML += `<div class="msg bot">${resp}</div>`;
+            container.scrollTop = container.scrollHeight;
+        }, 600);
     }
 
-    // Tecla Enter para facilitar no PC
-    document.addEventListener('keypress', (e) => {
-        if(e.key === 'Enter') {
-            if(document.getElementById('login-box').style.display !== 'none') executarLogin();
-            else enviar();
-        }
-    });
+    function ativarTreino() {
+        alert("Modo Treinamento Ativado! O bot responderá com a mensagem oficial de pausa até às 18h.");
+    }
 </script>
 </body>
-</html>
+</html>git add .
+git commit -m "feat: sistema unificado login + chat"
+git push
