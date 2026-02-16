@@ -1,48 +1,37 @@
-<script>
-// 1. Matriz de Inteligência Consolidada (Baseada nos seus JSONs)
-const fluxos = {
-    saudacao: () => {
-        const hora = new Date().getHours();
-        return hora < 12 ? "Bom dia" : hora < 18 ? "Boa tarde" : "Boa noite";
-    },
-    respostas: {
-        "treinamento": "Olá, tudo bem?\n\n⚠️ Nosso atendimento está em *treinamento*. Retornamos às 18h. 💙",
-        "tim": "📡 *NOC:* Consultando Backbone TIM. Verifique se o LED 'Alarm' está aceso.",
-        "vivo": "📡 *NOC:* Acessando gerência VIVO. O problema é falha total ou lentidão?",
-        "parceiro": "✨ *Play Tecnologia:* Você deseja implantar a MVNO para agregar valor ao seu produto?",
-        "default": "👋✨ {{saudacao}}! Bem-vindo à *Play Móvel*! 📱💙\n\nComo posso ajudar?\n1️⃣ Suporte Técnico\n2️⃣ Financeiro\n3️⃣ Parcerias\n4️⃣ Treinamento"
-    }
-};
+// --- COMPLEMENTO DE CONEXÃO (Para o chat funcionar no navegador) ---
 
-// 2. FUNÇÃO DE ENVIO (O QUE ESTAVA FALTANDO)
 function enviarMensagem() {
-    const input = document.getElementById('chat-input');
+    // Busca o campo de texto e a área de mensagens
+    const input = document.querySelector('input') || document.getElementById('chat-input');
     const container = document.getElementById('chat-messages');
+    
+    if (!input || !container) return; // Segurança caso os IDs mudem
+
     const msg = input.value.trim();
     
     if (msg !== "") {
-        // Adiciona mensagem do usuário
+        // 1. Adiciona sua mensagem na tela (lado direito)
         container.innerHTML += `<div class="message user">${msg}</div>`;
-        input.value = '';
+        input.value = ''; // Limpa o campo
 
-        // Resposta do Bot com os fluxos oficiais
+        // 2. Chama a inteligência que você colou acima
         setTimeout(() => {
-            let resposta = fluxos.respostas.default.replace("{{saudacao}}", fluxos.saudacao());
-            const termo = msg.toLowerCase();
-
-            if (termo.includes("treinamento")) resposta = fluxos.respostas.treinamento;
-            else if (termo.includes("tim")) resposta = fluxos.respostas.tim;
-            else if (termo.includes("vivo")) resposta = fluxos.respostas.vivo;
-            else if (termo.includes("parceiro")) resposta = fluxos.respostas.parceiro;
-
+            const resposta = processarResposta(msg);
             container.innerHTML += `<div class="message bot">${resposta}</div>`;
-            container.scrollTop = container.scrollHeight;
+            container.scrollTop = container.scrollHeight; // Rola para o fim
         }, 600);
     }
 }
 
-// 3. Habilitar Tecla Enter
-document.getElementById('chat-input').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') enviarMensagem();
+// Ativa o envio ao clicar no botão ou apertar Enter
+document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.querySelector('button');
+    const input = document.querySelector('input');
+
+    if (btn) btn.onclick = enviarMensagem;
+    if (input) {
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') enviarMensagem();
+        });
+    }
 });
-</script>
