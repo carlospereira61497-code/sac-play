@@ -1,66 +1,53 @@
+<div id="chat-container" style="background: #1a1a1a; color: white; height: 100vh; display: flex; flex-direction: column;">
+    
+    <div id="chat-messages" style="flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column;">
+        </div>
+
+    <div style="padding: 20px; background: #222; display: flex; gap: 10px;">
+        <input type="text" id="chat-input" placeholder="Digite sua mensagem..." style="flex: 1; padding: 12px; border-radius: 5px; border: none; background: #333; color: white;">
+        <button id="send-btn" style="background: #d10061; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Enviar</button>
+    </div>
+</div>
+
 <script>
-// 1. Matriz de Inteligência Consolidada (Baseada nos seus JSONs)
-const fluxosOficiais = {
-    "saudacao": () => {
+// A Matriz de Inteligência que você aprovou
+const fluxos = {
+    saudacao: () => {
         const hora = new Date().getHours();
-        if (hora < 12) return "Bom dia";
-        if (hora < 18) return "Boa tarde";
-        return "Boa noite";
+        return hora < 12 ? "Bom dia" : hora < 18 ? "Boa tarde" : "Boa noite";
     },
-    "respostas": {
-        "treinamento": "Olá, tudo bem?\n\n⚠️ Nosso atendimento está em *treinamento*. É um investimento em qualidade. Retornamos às 18h. 💙",
-        "tim": "📡 *NOC:* Consultando Backbone TIM. Verifique o LED 'Alarm'.",
-        "vivo": "📡 *NOC:* Acessando gerência VIVO. Informe o ID do circuito.",
-        "financeiro": "💸 *Faturamento:* Para 2ª via de boletos, digite seu CPF/CNPJ.",
-        "default": "👋✨ {{saudacao}}! Bem-vindo à *Play Móvel*! 📱💙\n\nComo posso ajudar?\n1️⃣ Suporte Técnico\n2️⃣ Financeiro\n3️⃣ Parcerias\n4️⃣ Treinamento"
+    respostas: {
+        "treinamento": "Olá! ⚠️ Atendimento em *treinamento*. Retornamos às 18h. 💙",
+        "tim": "📡 *NOC:* Verificando Backbone TIM...",
+        "vivo": "📡 *NOC:* Verificando Gerência VIVO...",
+        "default": "👋✨ {{saudacao}}! Bem-vindo à *Play Móvel*!\nComo posso ajudar?\n1️⃣ Suporte\n2️⃣ Financeiro\n3️⃣ Treinamento"
     }
 };
 
-// 2. Lógica de Processamento
-function processarResposta(mensagem) {
-    const texto = mensagem.toLowerCase();
-    if (texto.includes("treinamento")) return fluxosOficiais.respostas.treinamento;
-    if (texto.includes("tim")) return fluxosOficiais.respostas.tim;
-    if (texto.includes("vivo")) return fluxosOficiais.respostas.vivo;
-    if (texto.includes("financeiro")) return fluxosOficiais.respostas.financeiro;
-    
-    return fluxosOficiais.respostas.default.replace("{{saudacao}}", fluxosOficiais.saudacao());
-}
-
-// 3. Função de Envio (O Coração do Chat)
 function enviarMensagem() {
-    const input = document.querySelector('input');
+    const input = document.getElementById('chat-input');
     const container = document.getElementById('chat-messages');
-    
-    if (!input || !container) return;
-
     const msg = input.value.trim();
+
     if (msg !== "") {
-        // Mensagem do Usuário
-        container.innerHTML += `<div class="message user">${msg}</div>`;
+        // Renderiza mensagem do usuário (Rosa Play)
+        container.innerHTML += `<div style="background:#d10061; margin: 5px; padding: 10px; border-radius: 10px; align-self: flex-end; max-width: 80%;">${msg}</div>`;
         input.value = '';
 
-        // Resposta do Bot
         setTimeout(() => {
-            const resposta = processarResposta(msg);
-            container.innerHTML += `<div class="message bot">${resposta}</div>`;
+            let resp = msg.toLowerCase().includes("treinamento") ? fluxos.respostas.treinamento : 
+                       msg.toLowerCase().includes("tim") ? fluxos.respostas.tim : 
+                       msg.toLowerCase().includes("vivo") ? fluxos.respostas.vivo : 
+                       fluxos.respostas.default.replace("{{saudacao}}", fluxos.saudacao());
+
+            // Renderiza resposta do Bot (Cinza NOC)
+            container.innerHTML += `<div style="background:#333; margin: 5px; padding: 10px; border-radius: 10px; align-self: flex-start; max-width: 80%;">${resp}</div>`;
             container.scrollTop = container.scrollHeight;
         }, 600);
     }
 }
 
-// 4. Inicialização do Sistema (Enter e Botão)
-document.addEventListener('DOMContentLoaded', () => {
-    const input = document.querySelector('input');
-    const btn = document.querySelector('button');
-    
-    if (input) {
-        input.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') enviarMensagem();
-        });
-    }
-    if (btn) {
-        btn.onclick = enviarMensagem;
-    }
-});
+// Vincula o clique e o Enter
+document.getElementById('send-btn').onclick = enviarMensagem;
+document.getElementById('chat-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') enviarMensagem(); });
 </script>
