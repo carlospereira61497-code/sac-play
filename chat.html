@@ -1,5 +1,5 @@
 <script>
-// 1. Matriz de Inteligência Consolidada
+// 1. Matriz de Inteligência Consolidada (Baseada nos seus JSONs)
 const fluxosOficiais = {
     "saudacao": () => {
         const hora = new Date().getHours();
@@ -8,9 +8,9 @@ const fluxosOficiais = {
         return "Boa noite";
     },
     "respostas": {
-        "treinamento": "Olá, tudo bem?\n\n⚠️ Nosso atendimento está em *treinamento*. Retornamos normalmente às 18h. 💙",
-        "tim": "📡 *NOC:* Consultando Backbone TIM. Verifique se o LED 'Alarm' está aceso.",
-        "vivo": "📡 *NOC:* Acessando gerência VIVO. O problema é falha total ou lentidão?",
+        "treinamento": "Olá, tudo bem?\n\n⚠️ Nosso atendimento está em *treinamento*. É um investimento em qualidade. Retornamos às 18h. 💙",
+        "tim": "📡 *NOC:* Consultando Backbone TIM. Verifique o LED 'Alarm'.",
+        "vivo": "📡 *NOC:* Acessando gerência VIVO. Informe o ID do circuito.",
         "financeiro": "💸 *Faturamento:* Para 2ª via de boletos, digite seu CPF/CNPJ.",
         "default": "👋✨ {{saudacao}}! Bem-vindo à *Play Móvel*! 📱💙\n\nComo posso ajudar?\n1️⃣ Suporte Técnico\n2️⃣ Financeiro\n3️⃣ Parcerias\n4️⃣ Treinamento"
     }
@@ -27,7 +27,7 @@ function processarResposta(mensagem) {
     return fluxosOficiais.respostas.default.replace("{{saudacao}}", fluxosOficiais.saudacao());
 }
 
-// 3. Função de Envio (Resolve a "Tela Preta" e o chat parado)
+// 3. Função de Envio (O Coração do Chat)
 function enviarMensagem() {
     const input = document.querySelector('input');
     const container = document.getElementById('chat-messages');
@@ -36,9 +36,11 @@ function enviarMensagem() {
 
     const msg = input.value.trim();
     if (msg !== "") {
+        // Mensagem do Usuário
         container.innerHTML += `<div class="message user">${msg}</div>`;
         input.value = '';
 
+        // Resposta do Bot
         setTimeout(() => {
             const resposta = processarResposta(msg);
             container.innerHTML += `<div class="message bot">${resposta}</div>`;
@@ -47,11 +49,18 @@ function enviarMensagem() {
     }
 }
 
-// 4. Ativadores (Enter e Clique)
+// 4. Inicialização do Sistema (Enter e Botão)
 document.addEventListener('DOMContentLoaded', () => {
     const input = document.querySelector('input');
     const btn = document.querySelector('button');
-    if (input) input.addEventListener('keypress', (e) => { if (e.key === 'Enter') enviarMensagem(); });
-    if (btn) btn.onclick = enviarMensagem;
+    
+    if (input) {
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') enviarMensagem();
+        });
+    }
+    if (btn) {
+        btn.onclick = enviarMensagem;
+    }
 });
 </script>
