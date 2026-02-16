@@ -1,50 +1,43 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <title>Play NOC | Chat</title>
-</head>
-<body class="bg-[#050505] h-screen flex flex-col text-slate-300 font-sans">
+// Matriz de Inteligência Consolidada (Play Móvel + Mútua + Parceiros + NOC)
+const fluxosOficiais = {
+    "saudacao": () => {
+        const hora = new Date().getHours();
+        if (hora < 12) return "Bom dia";
+        if (hora < 18) return "Boa tarde";
+        return "Boa noite";
+    },
+    "estados": {
+        "INICIO": {
+            msg: `👋✨ {{saudacao}}! Bem-vindo à *Play Móvel*!\n\nPara segurança, informe seu *Número* ou *ID do Circuito* (apenas números):`,
+            proximo: "MENU_PRINCIPAL"
+        },
+        "MENU_PRINCIPAL": {
+            msg: "Como podemos evoluir sua experiência hoje?\n\n1️⃣ Suporte Técnico (Tim/Vivo)\n2️⃣ Mútua Celular\n3️⃣ Financeiro / Faturamento\n4️⃣ Parcerias & MVNO\n5️⃣ Atendimento Humano",
+            opcoes: {
+                "1": "SUPORTE_NOC",
+                "2": "MUTUA",
+                "3": "FINANCEIRO",
+                "4": "PARCEIROS",
+                "5": "HUMANO"
+            }
+        },
+        "RECONHECIMENTO": {
+            msg: "⚠️ *Aviso Importante:*\nNosso time está em treinamento para melhor atendê-lo. O atendimento será retomado às 18h. Agradecemos a compreensão! 💙"
+        }
+    }
+};
 
-    <header class="bg-[#0a0a0a] border-b border-white/5 p-4 flex justify-between items-center shadow-md">
-        <div class="flex items-center gap-3">
-            <div class="bg-[#ff0066] p-2 rounded-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M8 5v14l11-7z" />
-                </svg>
-            </div>
-            <span class="text-xs font-bold uppercase tracking-[0.2em] text-white">Play Atendimento</span>
-        </div>
-        <div class="flex items-center gap-2">
-            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <span class="text-[10px] text-slate-500 font-bold uppercase">NOC Online</span>
-        </div>
-    </header>
+// Lógica de Processamento (O "Cérebro" do Bot)
+function processarResposta(mensagem) {
+    const texto = mensagem.toLowerCase();
+    
+    // Se o cliente digitar algo sobre treinamento ou se você ativar o modo pausa
+    if (texto.includes("treinamento")) return fluxosOficiais.estados.RECONHECIMENTO.msg;
 
-    <main id="chat-window" class="flex-1 overflow-y-auto p-6 space-y-6">
-        <div class="flex flex-col items-start max-w-md">
-            <div class="bg-[#1a1a1a] border border-white/5 p-4 rounded-2xl rounded-tl-none shadow-lg">
-                <p class="text-sm">Olá, preciso de suporte para o circuito VIVO-SMB-01.</p>
-            </div>
-            <span class="text-[9px] text-slate-600 mt-2 ml-1 uppercase">13:20 - Cliente</span>
-        </div>
-
-        <div class="flex flex-col items-end max-w-md ml-auto">
-            <div class="bg-[#262626] border border-white/10 p-4 rounded-2xl rounded-tr-none shadow-2xl">
-                <p class="text-sm text-white">Recebido. Verificando alarmes no backbone. Aguarde.</p>
-            </div>
-            <span class="text-[9px] text-[#ff0066] mt-2 mr-1 uppercase font-bold tracking-widest">13:21 - Play NOC Bot</span>
-        </div>
-    </main>
-
-    <footer class="p-4 bg-[#0a0a0a] border-t border-white/5">
-        <div class="max-w-4xl mx-auto flex gap-4">
-            <input type="text" placeholder="Resposta técnica..." 
-                class="flex-1 bg-[#121212] border border-white/10 rounded-xl px-5 py-4 text-sm text-white focus:outline-none focus:border-[#ff0066] transition-all">
-            <button class="bg-white text-black font-black px-8 py-4 rounded-xl text-xs uppercase hover:bg-slate-200 transition">Enviar</button>
-        </div>
-    </footer>
-
-</body>
-</html>
+    // Respostas Rápidas baseadas nos seus JSONs
+    if (texto.includes("tim")) return "📡 *NOC:* Consultando Backbone TIM. Verifique se o LED 'Alarm' está aceso.";
+    if (texto.includes("vivo")) return "📡 *NOC:* Acessando gerência VIVO. Informe se a falha é em Samambaia ou região.";
+    if (texto.includes("financeiro")) return "💸 *Faturamento:* Para 2ª via de boletos, digite seu CPF/CNPJ.";
+    
+    return fluxosOficiais.estados.MENU_PRINCIPAL.msg.replace("{{saudacao}}", fluxosOficiais.saudacao());
+}
