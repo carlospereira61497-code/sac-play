@@ -1,37 +1,57 @@
-// --- COMPLEMENTO DE CONEXÃO (Para o chat funcionar no navegador) ---
+<script>
+// 1. Matriz de Inteligência Consolidada
+const fluxosOficiais = {
+    "saudacao": () => {
+        const hora = new Date().getHours();
+        if (hora < 12) return "Bom dia";
+        if (hora < 18) return "Boa tarde";
+        return "Boa noite";
+    },
+    "respostas": {
+        "treinamento": "Olá, tudo bem?\n\n⚠️ Nosso atendimento está em *treinamento*. Retornamos normalmente às 18h. 💙",
+        "tim": "📡 *NOC:* Consultando Backbone TIM. Verifique se o LED 'Alarm' está aceso.",
+        "vivo": "📡 *NOC:* Acessando gerência VIVO. O problema é falha total ou lentidão?",
+        "financeiro": "💸 *Faturamento:* Para 2ª via de boletos, digite seu CPF/CNPJ.",
+        "default": "👋✨ {{saudacao}}! Bem-vindo à *Play Móvel*! 📱💙\n\nComo posso ajudar?\n1️⃣ Suporte Técnico\n2️⃣ Financeiro\n3️⃣ Parcerias\n4️⃣ Treinamento"
+    }
+};
 
+// 2. Lógica de Processamento
+function processarResposta(mensagem) {
+    const texto = mensagem.toLowerCase();
+    if (texto.includes("treinamento")) return fluxosOficiais.respostas.treinamento;
+    if (texto.includes("tim")) return fluxosOficiais.respostas.tim;
+    if (texto.includes("vivo")) return fluxosOficiais.respostas.vivo;
+    if (texto.includes("financeiro")) return fluxosOficiais.respostas.financeiro;
+    
+    return fluxosOficiais.respostas.default.replace("{{saudacao}}", fluxosOficiais.saudacao());
+}
+
+// 3. Função de Envio (Resolve a "Tela Preta" e o chat parado)
 function enviarMensagem() {
-    // Busca o campo de texto e a área de mensagens
-    const input = document.querySelector('input') || document.getElementById('chat-input');
+    const input = document.querySelector('input');
     const container = document.getElementById('chat-messages');
     
-    if (!input || !container) return; // Segurança caso os IDs mudem
+    if (!input || !container) return;
 
     const msg = input.value.trim();
-    
     if (msg !== "") {
-        // 1. Adiciona sua mensagem na tela (lado direito)
         container.innerHTML += `<div class="message user">${msg}</div>`;
-        input.value = ''; // Limpa o campo
+        input.value = '';
 
-        // 2. Chama a inteligência que você colou acima
         setTimeout(() => {
             const resposta = processarResposta(msg);
             container.innerHTML += `<div class="message bot">${resposta}</div>`;
-            container.scrollTop = container.scrollHeight; // Rola para o fim
+            container.scrollTop = container.scrollHeight;
         }, 600);
     }
 }
 
-// Ativa o envio ao clicar no botão ou apertar Enter
+// 4. Ativadores (Enter e Clique)
 document.addEventListener('DOMContentLoaded', () => {
-    const btn = document.querySelector('button');
     const input = document.querySelector('input');
-
+    const btn = document.querySelector('button');
+    if (input) input.addEventListener('keypress', (e) => { if (e.key === 'Enter') enviarMensagem(); });
     if (btn) btn.onclick = enviarMensagem;
-    if (input) {
-        input.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') enviarMensagem();
-        });
-    }
 });
+</script>
