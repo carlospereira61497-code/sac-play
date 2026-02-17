@@ -1,0 +1,11 @@
+/* Isso garante que o site apareça mesmo com erro de cache */
+body {
+    opacity: 1 !important;
+    display: block !important;
+    visibility: visible !important;
+    background-color: #F8FAFC !important; /* Cor clara de fundo */
+}
+
+.loader-wrapper, #loader {
+    display: none !important;
+}
